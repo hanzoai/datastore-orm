@@ -283,7 +283,7 @@ class MigrationHistory(Model):
     engine = MergeTree(
         "applied",
         ("package_name", "module_name"),
-        replica_table_path="/clickhouse/prod/tables/noshard/posthog.infi_clickhouse_orm_migrations",
+        replica_table_path="/clickhouse/{db_name}/tables/noshard/posthog.infi_clickhouse_orm_migrations",
         replica_name="{replica}-{shard}",
     )
 

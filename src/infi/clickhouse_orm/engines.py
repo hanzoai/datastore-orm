@@ -104,7 +104,7 @@ class MergeTree(Engine):
     def _build_sql_params(self, db):
         params = []
         if self.replica_name:
-            params += ["'%s'" % self.replica_table_path, "'%s'" % self.replica_name]
+            params += ["'%s'" % self.replica_table_path.format(db_name=db.db_name), "'%s'" % self.replica_name]
 
         # In ClickHouse 1.1.54310 custom partitioning key was introduced
         # https://clickhouse.tech/docs/en/table_engines/custom_partitioning_key/
