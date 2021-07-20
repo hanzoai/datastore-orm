@@ -287,12 +287,24 @@ class MigrationHistory(Model):
         return "infi_clickhouse_orm_migrations"
 
 class MigrationHistoryReplicated(Model):
+    """
+    A model for storing which migrations were already applied to the containing database.
+    """
+
+    package_name = StringField()
+    module_name = StringField()
+    applied = DateField()
+    
     engine = MergeTree(
         "applied",
         ("package_name", "module_name"),
         replica_table_path="/clickhouse/prod/tables/noshard/posthog.infi_clickhouse_orm_migrations",
         replica_name="{replica}-{shard}",
     )
+    
+    @classmethod
+    def table_name(cls):
+        return "infi_clickhouse_orm_migrations"
 
 
 # Expose only relevant classes in import *
