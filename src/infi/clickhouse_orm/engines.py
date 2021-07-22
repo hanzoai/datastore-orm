@@ -197,6 +197,27 @@ class Buffer(Engine):
               )
         return sql
 
+class Kakfa(Engine):
+    """
+    Kafka backed tables for consuming from or producing to Kafka
+    Read more [here](https://clickhouse.tech/docs/en/engines/table-engines/integrations/kafka/).
+    """
+    
+    def __init__(self, topic, group_id, bootstrap_servers, format="JSONEachRow", schema=None, skip_broken_messages=100, num_consumers=1):
+        self.topic = topic
+        self.group_id = group_id
+        self.bootstrap_servers = bootstrap_servers
+        self.format = format
+        self.schema = schema
+        self.skip_broken_messages = skip_broken_messages
+        self.num_consumers = num_consumers
+
+    def create_table_sql(self, db):
+        return f"""Kafka SETTINGS kafka_broker_list = '{self.bootstrap_servers}'
+                                  kafka_topic_list = '{self.topic}'
+                                  kafka_group_name = '{self.group_id}'
+                                  kafka_format = '{self.format}'
+                                  kafka_num_consumers = {self.num_consumers}"""
 
 class Merge(Engine):
     """

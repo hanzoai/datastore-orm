@@ -33,7 +33,7 @@ class ModelOperation(Operation):
         """
         Utility for running ALTER TABLE commands.
         """
-        cmd = "ALTER TABLE $db.`%s` %s" % (self.table_name, cmd)
+        cmd = f"ALTER TABLE $db.`{self.table_name}` {database.on_cluster_sql} {cmd}" % (self.table_name, cmd)
         logger.debug(cmd)
         database.raw(cmd)
 

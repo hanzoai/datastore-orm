@@ -82,7 +82,7 @@ class Database(object):
 
     def __init__(self, db_name, db_url='http://localhost:8123/',
                  username=None, password=None, readonly=False, autocreate=True,
-                 timeout=60, verify_ssl_cert=True, log_statements=False):
+                 timeout=60, verify_ssl_cert=True, log_statements=False, cluster=None):
         '''
         Initializes a database instance. Unless it's readonly, the database will be
         created on the ClickHouse server if it does not already exist.
@@ -96,6 +96,7 @@ class Database(object):
         - `timeout`: the connection timeout in seconds.
         - `verify_ssl_cert`: whether to verify the server's certificate when connecting via HTTPS.
         - `log_statements`: when True, all database statements are logged.
+        - `cluster`: when not None, all DDL statements are run `ON CLUSTER <cluster>`.
         '''
         self.db_name = db_name
         self.db_url = db_url
@@ -116,6 +117,11 @@ class Database(object):
             self.readonly = True
         elif autocreate and not self.db_exists:
             self.create_database()
+        self.cluster = cluster
+        if self.cluster: 
+            self.on_cluster_sql = f'ON CLUSTER {cluster}'
+        else:
+            self.on_cluster_sql = ''
         self.server_version = self._get_server_version()
         # Versions 1.1.53981 and below don't have timezone function
         self.server_timezone = self._get_server_timezone() if self.server_version > (1, 1, 53981) else pytz.utc

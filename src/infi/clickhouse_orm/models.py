@@ -10,7 +10,7 @@ from .fields import Field, StringField
 from .utils import parse_tsv, NO_VALUE, get_subclass_names, arg_to_sql, unescape
 from .query import QuerySet
 from .funcs import F
-from .engines import Merge, Distributed
+from .engines import Merge, Distributed, Kakfa
 
 logger = getLogger('clickhouse_orm')
 
@@ -352,7 +352,7 @@ class Model(metaclass=ModelBase):
         '''
         Returns the SQL statement for creating a table for this model.
         '''
-        parts = ['CREATE TABLE IF NOT EXISTS `%s`.`%s` (' % (db.db_name, cls.table_name())]
+        parts = [f'CREATE TABLE IF NOT EXISTS `{db.db_name}`.`{cls.table_name()}` {db.on_cluster_sql} (']
         # Fields
         items = []
         for name, field in cls.fields().items():
@@ -374,7 +374,7 @@ class Model(metaclass=ModelBase):
         '''
         Returns the SQL command for deleting this model's table.
         '''
-        return 'DROP TABLE IF EXISTS `%s`.`%s`' % (db.db_name, cls.table_name())
+        return f'DROP TABLE IF EXISTS `{db.db_name}`.`{cls.table_name()}` {db.on_cluster_sql}'
 
     @classmethod
     def from_tsv(cls, line, field_names, timezone_in_use=pytz.utc, database=None):
@@ -487,8 +487,8 @@ class BufferModel(Model):
         '''
         Returns the SQL statement for creating a table for this model.
         '''
-        parts = ['CREATE TABLE IF NOT EXISTS `%s`.`%s` AS `%s`.`%s`' % (db.db_name, cls.table_name(), db.db_name,
-                                                                        cls.engine.main_model.table_name())]
+        parts = [f'CREATE TABLE IF NOT EXISTS `{db.db_name}`.`{cls.table_name()}` AS `{db.db_name}`.`{cls.engine.main_model.table_name()}` {db.on_cluster_sql} ('] 
+        
         engine_str = cls.engine.create_table_sql(db)
         parts.append(engine_str)
         return ' '.join(parts)
@@ -511,7 +511,7 @@ class MergeModel(Model):
         Returns the SQL statement for creating a table for this model.
         '''
         assert isinstance(cls.engine, Merge), "engine must be an instance of engines.Merge"
-        parts = ['CREATE TABLE IF NOT EXISTS `%s`.`%s` (' % (db.db_name, cls.table_name())]
+        parts = [f'CREATE TABLE IF NOT EXISTS `{db.db_name}`.`{cls.table_name()}` {db.on_cluster_sql} (']
         cols = []
         for name, field in cls.fields().items():
             if name != '_table':
@@ -599,11 +599,32 @@ class DistributedModel(Model):
         cls.fix_engine_table()
 
         parts = [
-            'CREATE TABLE IF NOT EXISTS `{0}`.`{1}` AS `{0}`.`{2}`'.format(
-                db.db_name, cls.table_name(), cls.engine.table_name),
+            f'CREATE TABLE IF NOT EXISTS `{db.db_name}`.`{cls.table_name()}` AS `{db.db_name}`.`{cls.engine.table_name}` {db.on_cluster_sql}',
             'ENGINE = ' + cls.engine.create_table_sql(db)]
         return '\n'.join(parts)
 
+
+class KafkaModel(Model):
+    '''
+    Kafka model for Kafka engine backed tables
+    https://clickhouse.tech/docs/en/engines/table-engines/integrations/kafka/ 
+    '''
+
+    @classmethod
+    def create_table_sql(cls, db):
+        '''
+        Returns the SQL statement for creating a table for this model.
+        '''
+        assert isinstance(cls.engine, Kafka), "engine must be an instance of engines.Kafka"
+        parts = [f'CREATE TABLE IF NOT EXISTS `{db.db_name}`.`{cls.table_name()}` {db.on_cluster_sql} (']
+        cols = []
+        for name, field in cls.fields().items():
+            if name != '_table':
+                cols.append('    %s %s' % (name, field.get_sql(db=db)))
+        parts.append(',\n'.join(cols))
+        parts.append(')')
+        parts.append('ENGINE = ' + cls.engine.create_table_sql(db))
+        return '\n'.join(parts)
 
 # Expose only relevant classes in import *
 __all__ = get_subclass_names(locals(), (Model, Constraint, Index))
