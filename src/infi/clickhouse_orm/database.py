@@ -410,6 +410,8 @@ class Database(object):
         except ServerError as e:
             logger.exception('Cannot determine server version (%s), assuming 1.1.0', e)
             ver = '1.1.0'
+        # :TRICKY: Altinity cloud uses a non-numeric suffix for the version, which this removes.
+        ver = re.sub(r"[.\D]+$", '', ver)
         return tuple(int(n) for n in ver.split('.')) if as_tuple else ver
 
     def _is_existing_database(self):
