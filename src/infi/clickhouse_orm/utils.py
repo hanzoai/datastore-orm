@@ -155,6 +155,12 @@ def get_subclass_names(locals, base_class):
     from inspect import isclass
     return [c.__name__ for c in locals.values() if isclass(c) and issubclass(c, base_class)]
 
+def on_cluster(db):
+    if db.cluster is not None:
+        return "ON CLUSTER '{}'".format(db.cluster)
+    else:
+        return ''
+
 
 class NoValue:
     '''

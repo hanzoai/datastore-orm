@@ -7,7 +7,7 @@ from logging import getLogger
 import pytz
 
 from .fields import Field, StringField
-from .utils import parse_tsv, NO_VALUE, get_subclass_names, arg_to_sql, unescape
+from .utils import on_cluster, parse_tsv, NO_VALUE, get_subclass_names, arg_to_sql, unescape
 from .query import QuerySet
 from .funcs import F
 from .engines import Merge, Distributed
@@ -352,7 +352,7 @@ class Model(metaclass=ModelBase):
         '''
         Returns the SQL statement for creating a table for this model.
         '''
-        parts = ['CREATE TABLE IF NOT EXISTS `%s`.`%s` (' % (db.db_name, cls.table_name())]
+        parts = ['CREATE TABLE IF NOT EXISTS `%s`.`%s` %s (' % (db.db_name, cls.table_name(), on_cluster(db))]
         # Fields
         items = []
         for name, field in cls.fields().items():

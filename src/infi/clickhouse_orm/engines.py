@@ -224,9 +224,9 @@ class Distributed(Engine):
     See full documentation here
     https://clickhouse.tech/docs/en/engines/table-engines/special/distributed/
     """
-    def __init__(self, cluster, table=None, sharding_key=None):
+    def __init__(self, cluster=None, table=None, sharding_key=None):
         """
-        - `cluster`: what cluster to access data from
+        - `cluster`: what cluster to access data from. Defaults to db.cluster
         - `table`: underlying table that actually stores data.
         If you are not specifying any table here, ensure that it can be inferred
         from your model's superclass (see models.DistributedModel.fix_engine_table)
@@ -259,7 +259,11 @@ class Distributed(Engine):
             raise ValueError("Cannot create {} engine: specify an underlying table".format(
                 self.__class__.__name__))
 
-        params = ["`%s`" % p for p in [self.cluster, db.db_name, self.table_name]]
+        if self.cluster is None and db.cluster is None:
+            raise ValueError("Cannot create engine: specify a cluster")
+
+        cluster = self.cluster if self.cluster is not None else db.cluster
+        params = ["`%s`" % p for p in [cluster, db.db_name, self.table_name]]
         if self.sharding_key:
             params.append(self.sharding_key)
         return params
