@@ -355,12 +355,17 @@ class Database(object):
                 break
 
     def _get_applied_migrations(self, migrations_package_name, replicated):
-        from .migrations import MigrationHistory, MigrationHistoryReplicated
+        from .migrations import MigrationHistory, MigrationHistoryReplicated, MigrationHistoryDistributed
 
-        Model = MigrationHistoryReplicated if replicated else MigrationHistory
-        self.create_table(Model)
-        query = "SELECT module_name from $table WHERE package_name = '%s'" % migrations_package_name
-        query = self._substitute(query, Model)
+        query = "SELECT DISTINCT module_name FROM $table WHERE package_name = '%s'" % migrations_package_name
+
+        if replicated:
+            self.create_table(MigrationHistoryReplicated)
+            self.create_table(MigrationHistoryDistributed)
+            query = self._substitute(query, MigrationHistoryDistributed)
+        else:
+            self.create_table(MigrationHistory)
+            query = self._substitute(query, MigrationHistory)
         return set(obj.module_name for obj in self.select(query))
 
     def _send(self, data, settings=None, stream=False):
