@@ -81,7 +81,8 @@ class Database(object):
     '''
 
     def __init__(self, db_name, db_url='http://localhost:8123/',
-                 username=None, password=None, readonly=False, autocreate=True,
+                 username=None, password=None, cluster=None,
+                 readonly=False, autocreate=True,
                  timeout=60, verify_ssl_cert=True, log_statements=False):
         '''
         Initializes a database instance. Unless it's readonly, the database will be
@@ -91,6 +92,7 @@ class Database(object):
         - `db_url`: URL of the ClickHouse server.
         - `username`: optional connection credentials.
         - `password`: optional connection credentials.
+        - `cluster`: optional cluster to create tables on
         - `readonly`: use a read-only connection.
         - `autocreate`: automatically create the database if it does not exist (unless in readonly mode).
         - `timeout`: the connection timeout in seconds.
@@ -99,6 +101,7 @@ class Database(object):
         '''
         self.db_name = db_name
         self.db_url = db_url
+        self.cluster = cluster
         self.readonly = False
         self.timeout = timeout
         self.request_session = requests.Session()
