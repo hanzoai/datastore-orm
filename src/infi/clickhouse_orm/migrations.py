@@ -1,6 +1,6 @@
 import logging
 
-from .engines import MergeTree
+from .engines import Distributed, MergeTree
 from .fields import DateField, StringField
 from .models import BufferModel, Model
 from .utils import escape, get_subclass_names
@@ -294,17 +294,32 @@ class MigrationHistoryReplicated(Model):
     package_name = StringField()
     module_name = StringField()
     applied = DateField()
-    
+
     engine = MergeTree(
         "applied",
         ("package_name", "module_name"),
         replica_table_path="/clickhouse/prod/tables/noshard/posthog.infi_clickhouse_orm_migrations",
         replica_name="{replica}-{shard}",
     )
-    
+
     @classmethod
     def table_name(cls):
         return "infi_clickhouse_orm_migrations"
+
+class MigrationHistoryDistributed(Model):
+    """
+    Distributed table for storing which migrations are applied to the containing database
+    """
+
+    package_name = StringField()
+    module_name = StringField()
+    applied = DateField()
+
+    engine = Distributed(table="infi_clickhouse_orm_migrations", sharding_key="rand()")
+
+    @classmethod
+    def table_name(cls):
+        return "infi_clickhouse_orm_migrations_distributed"
 
 
 # Expose only relevant classes in import *
