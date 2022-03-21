@@ -343,7 +343,7 @@ class Database(object):
         '''
         from .migrations import MigrationHistory
         logger = logging.getLogger('migrations')
-        applied_migrations = self._get_applied_migrations(migrations_package_name, replicated=replicated)
+        applied_migrations = self._get_applied_migrations_and_create_tables(migrations_package_name, replicated=replicated)
         modules = import_submodules(migrations_package_name)
         unapplied_migrations = set(modules.keys()) - applied_migrations
         for name in sorted(unapplied_migrations):
@@ -354,18 +354,28 @@ class Database(object):
             if int(name[:4]) >= up_to:
                 break
 
+    def _get_applied_migrations_and_create_tables(self, migrations_package_name, replicated, allow_missing_tables=True):
+        if not allow_missing_tables:
+            return self._get_applied_migrations(migrations_package_name, replicated)
+
+        try:
+            return self._get_applied_migrations(migrations_package_name, replicated)
+        except ServerError:
+            from .migrations import MigrationHistory, MigrationHistoryReplicated, MigrationHistoryDistributed
+            if replicated:
+                self.create_table(MigrationHistoryReplicated)
+                self.create_table(MigrationHistoryDistributed)
+            else:
+                self.create_table(MigrationHistory)
+
+            return self._get_applied_migrations_and_create_tables(migrations_package_name, replicated, allow_missing_tables=False)
+
+
     def _get_applied_migrations(self, migrations_package_name, replicated):
-        from .migrations import MigrationHistory, MigrationHistoryReplicated, MigrationHistoryDistributed
-
+        from .migrations import MigrationHistory, MigrationHistoryDistributed
         query = "SELECT DISTINCT module_name FROM $table WHERE package_name = '%s'" % migrations_package_name
+        query = self._substitute(query, MigrationHistoryDistributed if replicated else MigrationHistory)
 
-        if replicated:
-            self.create_table(MigrationHistoryReplicated)
-            self.create_table(MigrationHistoryDistributed)
-            query = self._substitute(query, MigrationHistoryDistributed)
-        else:
-            self.create_table(MigrationHistory)
-            query = self._substitute(query, MigrationHistory)
         return set(obj.module_name for obj in self.select(query))
 
     def _send(self, data, settings=None, stream=False):
