@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/hero.svg" alt="infi.clickhouse_orm" width="880"></p>
+
 Introduction
 ============
 
