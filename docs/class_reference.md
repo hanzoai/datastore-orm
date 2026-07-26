@@ -1,7 +1,7 @@
 Class Reference
 ===============
 
-infi.clickhouse_orm.database
+datastore_orm.database
 ----------------------------
 
 ### Database
@@ -152,7 +152,7 @@ Extends Exception
 
 Raised when a database operation fails.
 
-infi.clickhouse_orm.models
+datastore_orm.models
 --------------------------
 
 ### Model
@@ -811,7 +811,7 @@ separated by non-alphanumeric characters.
 - `random_seed` — The seed for Bloom filter hash functions.
 
 
-infi.clickhouse_orm.fields
+datastore_orm.fields
 --------------------------
 
 ### ArrayField
@@ -1046,7 +1046,7 @@ Extends Field
 #### UUIDField(default=None, alias=None, materialized=None, readonly=None, codec=None)
 
 
-infi.clickhouse_orm.engines
+datastore_orm.engines
 ---------------------------
 
 ### Engine
@@ -1140,7 +1140,7 @@ Extends MergeTree
 #### ReplacingMergeTree(date_col=None, order_by=(), ver_col=None, sampling_expr=None, index_granularity=8192, replica_table_path=None, replica_name=None, partition_key=None, primary_key=None)
 
 
-infi.clickhouse_orm.query
+datastore_orm.query
 -------------------------
 
 ### QuerySet
@@ -1443,7 +1443,7 @@ https://clickhouse.tech/docs/en/query_language/select/#with-totals-modifier
 #### to_sql(model_cls)
 
 
-infi.clickhouse_orm.funcs
+datastore_orm.funcs
 -------------------------
 
 ### F

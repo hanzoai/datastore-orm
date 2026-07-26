@@ -2,10 +2,10 @@ import unittest
 import datetime
 import pytz
 
-from infi.clickhouse_orm.models import Model, NO_VALUE
-from infi.clickhouse_orm.fields import *
-from infi.clickhouse_orm.engines import *
-from infi.clickhouse_orm.funcs import F
+from datastore_orm.models import Model, NO_VALUE
+from datastore_orm.fields import *
+from datastore_orm.engines import *
+from datastore_orm.funcs import F
 
 
 class ModelTestCase(unittest.TestCase):

@@ -1,7 +1,7 @@
-# infi.clickhouse_orm
+# datastore_orm
 
-**Org:** hanzoai  ·  **Ecosystem:** hanzo  ·  **Path:** `/Users/a/work/hanzo/hanzoai/infi.clickhouse_orm`
-**Origin:** https://github.com/hanzoai/infi.clickhouse_orm.git
+**Org:** hanzoai  ·  **Ecosystem:** hanzo  ·  **Path:** `/Users/a/work/hanzo/hanzoai/datastore_orm`
+**Origin:** https://github.com/hanzoai/datastore_orm.git
 
 ## Discovery
 
