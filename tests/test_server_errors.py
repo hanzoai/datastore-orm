@@ -1,6 +1,6 @@
 import unittest
 
-from infi.clickhouse_orm.database import ServerError
+from datastore_orm.database import ServerError
 
 
 class ServerErrorTest(unittest.TestCase):

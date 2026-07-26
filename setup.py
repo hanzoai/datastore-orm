@@ -1,13 +1,13 @@
 
 SETUP_INFO = dict(
-    name = 'infi.clickhouse_orm',
+    name = 'datastore-orm',
     version = '2.1.0.post20',
-    author = 'James Greenhill',
-    author_email = 'fuziontech@gmail.com',
+    author = 'Hanzo AI, Inc.',
+    author_email = 'dev@hanzo.ai',
 
-    url = 'https://github.com/Infinidat/infi.clickhouse_orm',
+    url = 'https://github.com/hanzoai/datastore-orm',
     license = 'BSD',
-    description = """A Python library for working with the ClickHouse database""",
+    description = """Python ORM for Hanzo Datastore""",
 
     # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers = [
@@ -28,7 +28,6 @@ SETUP_INFO = dict(
 'requests',
 'setuptools'
 ],
-    namespace_packages = ['infi'],
 
     package_dir = {'': 'src'},
     package_data = {'': []},

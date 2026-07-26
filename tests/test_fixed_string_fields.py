@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from infi.clickhouse_orm.database import Database
-from infi.clickhouse_orm.models import Model
-from infi.clickhouse_orm.fields import *
-from infi.clickhouse_orm.engines import *
+from datastore_orm.database import Database
+from datastore_orm.models import Model
+from datastore_orm.fields import *
+from datastore_orm.engines import *
 
 
 class FixedStringFieldsTest(unittest.TestCase):

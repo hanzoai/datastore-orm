@@ -1,5 +1,5 @@
 import psutil, time, datetime
-from infi.clickhouse_orm import Database
+from datastore_orm import Database
 from models import CPUStats
 
 

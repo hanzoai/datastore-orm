@@ -2,11 +2,11 @@ import unittest
 import datetime
 import pytz
 
-from infi.clickhouse_orm.database import Database
-from infi.clickhouse_orm.models import Model, NO_VALUE
-from infi.clickhouse_orm.fields import *
-from infi.clickhouse_orm.engines import *
-from infi.clickhouse_orm.utils import parse_tsv
+from datastore_orm.database import Database
+from datastore_orm.models import Model, NO_VALUE
+from datastore_orm.fields import *
+from datastore_orm.engines import *
+from datastore_orm.utils import parse_tsv
 
 
 class CompressedFieldsTestCase(unittest.TestCase):

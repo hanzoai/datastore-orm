@@ -7,9 +7,9 @@ from ipaddress import IPv4Address, IPv6Address
 import logging
 from decimal import Decimal
 
-from infi.clickhouse_orm.database import ServerError
-from infi.clickhouse_orm.utils import NO_VALUE
-from infi.clickhouse_orm.funcs import F
+from datastore_orm.database import ServerError
+from datastore_orm.utils import NO_VALUE
+from datastore_orm.funcs import F
 
 
 class FuncsTestCase(TestCaseWithData):
