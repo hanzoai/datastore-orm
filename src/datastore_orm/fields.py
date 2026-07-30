@@ -11,7 +11,7 @@ from .utils import escape, parse_array, comma_join, string_or_func, get_subclass
 from .funcs import F, FunctionOperatorsMixin
 from ipaddress import IPv4Address, IPv6Address
 
-logger = getLogger('clickhouse_orm')
+logger = getLogger('datastore_orm')
 
 
 class Field(FunctionOperatorsMixin):
