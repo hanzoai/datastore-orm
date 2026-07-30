@@ -100,8 +100,8 @@ class Database(object):
         - `verify_ssl_cert`: whether to verify the server's certificate when connecting via HTTPS.
         - `log_statements`: when True, all database statements are logged.
         - `randomize_replica_paths`: when True, a random integer is appended to table replica paths.
-          This way replicated tables (such as `MigrationHistoryReplicated`) can be dropped and recreated without causing
-          a conflict in Zookeeper. This shouldn't be used in production though.
+          This way replicated tables can be dropped and recreated without causing
+          a conflict in the coordinator. This shouldn't be used in production though.
         - `trust_env`: when True, the request session will use environment variables for proxy configuration etc.
         '''
         self.db_name = db_name
@@ -368,20 +368,20 @@ class Database(object):
         try:
             return self._get_applied_migrations(migrations_package_name, replicated)
         except ServerError:
-            from .migrations import MigrationHistory, MigrationHistoryReplicated, MigrationHistoryDistributed
-            if replicated:
-                self.create_table(MigrationHistoryReplicated)
-                self.create_table(MigrationHistoryDistributed)
-            else:
-                self.create_table(MigrationHistory)
+            from .migrations import MigrationHistory
+            self.create_table(MigrationHistory)
 
             return self._get_applied_migrations_and_create_tables(migrations_package_name, replicated, allow_missing_tables=False)
 
 
     def _get_applied_migrations(self, migrations_package_name, replicated):
-        from .migrations import MigrationHistory, MigrationHistoryDistributed
+        # `replicated` is still accepted so callers need not change, but there is
+        # nothing left to select: the history is ONE table on ONE node. It used to
+        # pick a Distributed twin whose only difference was an engine for a
+        # sharded, ZooKeeper-coordinated cluster we do not run.
+        from .migrations import MigrationHistory
         query = "SELECT DISTINCT module_name FROM $table WHERE package_name = '%s'" % migrations_package_name
-        query = self._substitute(query, MigrationHistoryDistributed if replicated else MigrationHistory)
+        query = self._substitute(query, MigrationHistory)
 
         return set(obj.module_name for obj in self.select(query))
 

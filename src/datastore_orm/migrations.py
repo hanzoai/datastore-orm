@@ -1,6 +1,6 @@
 import logging
 
-from .engines import Distributed, MergeTree
+from .engines import MergeTree
 from .fields import DateField, StringField
 from .models import BufferModel, Model
 from .utils import escape, get_subclass_names
@@ -273,7 +273,19 @@ class RunSQL(Operation):
 
 class MigrationHistory(Model):
     """
-    A model for storing which migrations were already applied to the containing database.
+    Which migrations were already applied to the containing database.
+
+    ONE model, not three. The Replicated and Distributed twins that used to sit
+    here differed only in engine — same fields, same purpose, and all three
+    returned the SAME table name, so two of them could never be the table anyone
+    read. They existed for a sharded, ZooKeeper-coordinated topology; the store
+    is a single node with no ZooKeeper, so the branch that chose them was always
+    taking the same arm. Deleting them removes a decision that had one answer.
+
+    The table is `migrations`. It was `infi_clickhouse_orm_migrations`, which
+    restated three things the reader already has: the vendor of a library we
+    forked, the engine we no longer name, and the layer the database qualifier
+    already supplies. `insights.migrations` says all of it.
     """
 
     package_name = StringField()
@@ -284,42 +296,7 @@ class MigrationHistory(Model):
 
     @classmethod
     def table_name(cls):
-        return "infi_clickhouse_orm_migrations"
-
-class MigrationHistoryReplicated(Model):
-    """
-    A model for storing which migrations were already applied to the containing database.
-    """
-
-    package_name = StringField()
-    module_name = StringField()
-    applied = DateField()
-
-    engine = MergeTree(
-        "applied",
-        ("package_name", "module_name"),
-        replica_table_path="/clickhouse/prod/tables/noshard/{database}/{table}",
-        replica_name="{replica}-{shard}",
-    )
-
-    @classmethod
-    def table_name(cls):
-        return "infi_clickhouse_orm_migrations"
-
-class MigrationHistoryDistributed(Model):
-    """
-    Distributed table for storing which migrations are applied to the containing database
-    """
-
-    package_name = StringField()
-    module_name = StringField()
-    applied = DateField()
-
-    engine = Distributed(table="infi_clickhouse_orm_migrations", sharding_key="rand()")
-
-    @classmethod
-    def table_name(cls):
-        return "infi_clickhouse_orm_migrations_distributed"
+        return "migrations"
 
 
 # Expose only relevant classes in import *
