@@ -74,7 +74,7 @@ class MergeTree(Engine):
         if self.replica_name:
             name = 'Replicated' + name
 
-        # In ClickHouse 1.1.54310 custom partitioning key was introduced
+        # In the datastore 1.1.54310 custom partitioning key was introduced
         # https://clickhouse.tech/docs/en/table_engines/custom_partitioning_key/
         # Let's check version and use new syntax if available
         if db.server_version >= (1, 1, 54310):
@@ -93,7 +93,7 @@ class MergeTree(Engine):
         elif not self.date_col:
             # Can't import it globally due to circular import
             from datastore_orm.database import DatabaseException
-            raise DatabaseException("Custom partitioning is not supported before ClickHouse 1.1.54310. "
+            raise DatabaseException("Custom partitioning is not supported before the datastore 1.1.54310. "
                                     "Please update your server or use date_col syntax."
                                     "https://clickhouse.tech/docs/en/table_engines/custom_partitioning_key/")
         else:
@@ -110,10 +110,10 @@ class MergeTree(Engine):
                 final_replica_table_path += f'/{random.randint(0, 100000000)}'
             params += ["'%s'" % final_replica_table_path, "'%s'" % self.replica_name]
 
-        # In ClickHouse 1.1.54310 custom partitioning key was introduced
+        # In the datastore 1.1.54310 custom partitioning key was introduced
         # https://clickhouse.tech/docs/en/table_engines/custom_partitioning_key/
         # These parameters are process in create_table_sql directly.
-        # In previous ClickHouse versions this this syntax does not work.
+        # In previous the datastore versions this this syntax does not work.
         if db.server_version < (1, 1, 54310):
             params.append(self.date_col)
             if self.sampling_expr:

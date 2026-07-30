@@ -550,7 +550,7 @@ class QuerySet(object):
     def delete(self):
         """
         Deletes all records matched by this queryset's conditions.
-        Note that ClickHouse performs deletions in the background, so they are not immediate.
+        Note that the datastore performs deletions in the background, so they are not immediate.
         """
         self._verify_mutation_allowed()
         conditions = (self._where_q & self._prewhere_q).to_sql(self._model_cls)
@@ -562,7 +562,7 @@ class QuerySet(object):
         """
         Updates all records matched by this queryset's conditions.
         Keyword arguments specify the field names and expressions to use for the update.
-        Note that ClickHouse performs updates in the background, so they are not immediate.
+        Note that the datastore performs updates in the background, so they are not immediate.
         """
         assert kwargs, 'No fields specified for update'
         self._verify_mutation_allowed()
@@ -612,7 +612,7 @@ class AggregateQuerySet(QuerySet):
         ```
             ('event_type', 'event_subtype')
         ```
-        The calculated fields should be a mapping from name to a ClickHouse aggregation function. For example:
+        The calculated fields should be a mapping from name to a datastore aggregation function. For example:
         ```
             {'weekday': 'toDayOfWeek(event_date)', 'number_of_events': 'count()'}
         ```

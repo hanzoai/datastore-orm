@@ -26,7 +26,7 @@ class Constraint:
 
     def __init__(self, expr):
         '''
-        Initializer. Expects an expression that ClickHouse will verify when inserting data.
+        Initializer. Expects an expression that the datastore will verify when inserting data.
         '''
         self.expr = expr
 
@@ -254,7 +254,7 @@ class ModelBase(type):
 
 class Model(metaclass=ModelBase):
     '''
-    A base class for ORM models. Each model class represent a ClickHouse table. For example:
+    A base class for ORM models. Each model class represent a datastore table. For example:
 
         class CPUStats(Model):
             timestamp = DateTimeField()

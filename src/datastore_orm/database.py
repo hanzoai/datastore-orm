@@ -40,13 +40,13 @@ class ServerError(DatabaseException):
             super(ServerError, self).__init__(message)
 
     ERROR_PATTERNS = (
-        # ClickHouse prior to v19.3.3
+        # the datastore prior to v19.3.3
         re.compile(r'''
             Code:\ (?P<code>\d+),
             \ e\.displayText\(\)\ =\ (?P<type1>[^ \n]+):\ (?P<msg>.+?),
             \ e.what\(\)\ =\ (?P<type2>[^ \n]+)
         ''', re.VERBOSE | re.DOTALL),
-        # ClickHouse v19.3.3+
+        # the datastore v19.3.3+
         re.compile(r'''
             Code:\ (?P<code>\d+),
             \ e\.displayText\(\)\ =\ (?P<type1>[^ \n]+):\ (?P<msg>.+)
@@ -59,7 +59,7 @@ class ServerError(DatabaseException):
         Extract the code and message of the exception that clickhouse-server generated.
 
         See the list of error codes here:
-        https://github.com/yandex/ClickHouse/blob/master/dbms/src/Common/ErrorCodes.cpp
+        https://github.com/yandex/the datastore/blob/master/dbms/src/Common/ErrorCodes.cpp
         """
         for pattern in cls.ERROR_PATTERNS:
             match = pattern.match(full_error_message)
@@ -76,7 +76,7 @@ class ServerError(DatabaseException):
 
 class Database(object):
     '''
-    Database instances connect to a specific ClickHouse database for running queries,
+    Database instances connect to a specific the datastore database for running queries,
     inserting data and other operations.
     '''
 
@@ -87,10 +87,10 @@ class Database(object):
                  trust_env=True):
         '''
         Initializes a database instance. Unless it's readonly, the database will be
-        created on the ClickHouse server if it does not already exist.
+        created on the datastore server if it does not already exist.
 
         - `db_name`: name of the database to connect to.
-        - `db_url`: URL of the ClickHouse server.
+        - `db_url`: URL of the datastore server.
         - `username`: optional connection credentials.
         - `password`: optional connection credentials.
         - `cluster`: optional cluster to create tables on
@@ -136,14 +136,14 @@ class Database(object):
 
     def create_database(self):
         '''
-        Creates the database on the ClickHouse server if it does not already exist.
+        Creates the database on the datastore server if it does not already exist.
         '''
         self._send('CREATE DATABASE IF NOT EXISTS `%s`' % self.db_name)
         self.db_exists = True
 
     def drop_database(self):
         '''
-        Deletes the database on the ClickHouse server.
+        Deletes the database on the datastore server.
         '''
         self._send('DROP DATABASE `%s`' % self.db_name)
         self.db_exists = False
@@ -296,7 +296,7 @@ class Database(object):
 
         - `query`: the SQL query to execute.
         - `settings`: query settings to send as HTTP GET parameters
-        - `stream`: if true, the HTTP response from ClickHouse will be streamed.
+        - `stream`: if true, the HTTP response from the datastore will be streamed.
         '''
         query = self._substitute(query, None)
         return self._send(query, settings=settings, stream=stream).text
