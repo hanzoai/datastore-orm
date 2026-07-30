@@ -12,7 +12,7 @@ from .query import QuerySet
 from .funcs import F
 from .engines import Merge, Distributed
 
-logger = getLogger('clickhouse_orm')
+logger = getLogger('datastore_orm')
 
 
 
