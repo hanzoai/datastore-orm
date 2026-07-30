@@ -28,7 +28,7 @@ class SystemPart(Model):
     name = StringField()  # Name of the part.
 
     # This field is present in the docs (https://clickhouse.tech/docs/en/single/index.html#system-parts),
-    # but is absent in ClickHouse (in version 1.1.54245)
+    # but is absent in the datastore (in version 1.1.54245)
     # replicated = UInt8Field()  # Whether the part belongs to replicated data.
 
     # Whether the part is used in a table, or is no longer needed and will be deleted soon.
@@ -63,7 +63,7 @@ class SystemPart(Model):
 
         - `db`: Database object to execute operation on
         - `operation`: Operation to execute from SystemPart.OPERATIONS set
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: Operation execution result
         """
@@ -79,7 +79,7 @@ class SystemPart(Model):
         """
         Move a partition to the 'detached' directory and forget it.
 
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: SQL Query
         """
@@ -89,7 +89,7 @@ class SystemPart(Model):
         """
         Delete a partition
 
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: SQL Query
         """
@@ -99,7 +99,7 @@ class SystemPart(Model):
         """
          Add a new part or partition from the 'detached' directory to the table.
 
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: SQL Query
         """
@@ -109,7 +109,7 @@ class SystemPart(Model):
         """
         Create a backup of a partition.
 
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: SQL Query
         """
@@ -120,7 +120,7 @@ class SystemPart(Model):
         Download a partition from another server.
 
         - `zookeeper_path`: Path in zookeeper to fetch from
-        - `settings`: Settings for executing request to ClickHouse over db.raw() method
+        - `settings`: Settings for executing request to the datastore over db.raw() method
 
         Returns: SQL Query
         """

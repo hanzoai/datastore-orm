@@ -153,7 +153,7 @@ class AlterConstraints(ModelOperation):
     A migration operation that adds new constraints from the model to the database
     table, and drops obsolete ones. Constraints are identified by their names, so
     a change in an existing constraint will not be detected unless its name was changed too.
-    ClickHouse does not check that the constraints hold for existing data in the table.
+    the datastore does not check that the constraints hold for existing data in the table.
     """
 
     def apply(self, database):
@@ -193,7 +193,7 @@ class AlterIndexes(ModelOperation):
     def __init__(self, model_class, reindex=False):
         """
         Initializer.
-        By default ClickHouse does not build indexes over existing data, only for
+        By default the datastore does not build indexes over existing data, only for
         new data. Passing `reindex=True` will run `OPTIMIZE TABLE` in order to build
         the indexes over the existing data.
         """
