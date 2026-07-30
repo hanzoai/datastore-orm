@@ -5,7 +5,7 @@ import random
 
 from .utils import comma_join, get_subclass_names
 
-logger = logging.getLogger('clickhouse_orm')
+logger = logging.getLogger('datastore_orm')
 
 
 class Engine(object):

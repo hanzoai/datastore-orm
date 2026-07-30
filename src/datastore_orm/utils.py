@@ -86,7 +86,7 @@ def parse_tsv(line):
 
 def parse_array(array_string):
     """
-    Parse an array or tuple string as returned by clickhouse. For example:
+    Parse an array or tuple string as returned by the datastore. For example:
         "['hello', 'world']" ==> ["hello", "world"]
         "(1,2,3)"            ==> [1, 2, 3]
     """

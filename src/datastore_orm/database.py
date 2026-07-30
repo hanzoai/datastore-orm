@@ -11,7 +11,7 @@ from string import Template
 import pytz
 
 import logging
-logger = logging.getLogger('clickhouse_orm')
+logger = logging.getLogger('datastore_orm')
 
 
 Page = namedtuple('Page', 'objects number_of_objects pages_total number page_size')
