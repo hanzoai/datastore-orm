@@ -1,0 +1,11 @@
+# Python ORM for Hanzo Datastore — published to PyPI from a tag.
+#
+# Gate: the repo's own tox command, `compileall src/ tests/`. The suite beneath
+# it is nose-driven and needs a live datastore; nose does not run on a modern
+# interpreter at all, so running it here would be theatre. The compile is real:
+# it is the only thing standing between a syntax error and a released sdist.
+test:
+  - name: compile
+    run: |
+      set -euo pipefail
+      python3 -m compileall -q src/ tests/
