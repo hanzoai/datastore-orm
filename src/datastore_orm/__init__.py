@@ -1,5 +1,3 @@
-__import__("pkg_resources").declare_namespace(__name__)
-
 from datastore_orm.database import *
 from datastore_orm.engines import *
 from datastore_orm.fields import *
